@@ -20,6 +20,52 @@ function FloatingBadge({ label, Icon }) {
   );
 }
 
+function Globe3D() {
+  const longitudes = Array.from({ length: 12 }, (_, i) => i * 30); // 12 rings around Y
+  const latitudes = Array.from({ length: 7 }, (_, i) => -60 + i * 20); // -60..60 around X
+
+  return (
+    <div className="relative h-64 w-64 md:h-80 md:w-80" style={{ perspective: 1200 }}>
+      <motion.div
+        className="absolute inset-0 [transform-style:preserve-3d]"
+        animate={{ rotateY: 360 }}
+        transition={{ repeat: Infinity, duration: 28, ease: "linear" }}
+      >
+        {/* Core glow sphere */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-fuchsia-500/30 via-indigo-500/20 to-sky-500/30 blur-2xl" />
+        {/* Inner subtle fill to feel volumetric */}
+        <div className="absolute inset-0 rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.2),transparent)]" />
+
+        {/* Longitude rings (vertical) */}
+        {longitudes.map((deg) => (
+          <div
+            key={`lon-${deg}`}
+            className="absolute inset-0 rounded-full border border-cyan-300/20"
+            style={{ transform: `rotateY(${deg}deg)` }}
+          />
+        ))}
+
+        {/* Latitude rings (horizontal) */}
+        {latitudes.map((deg) => (
+          <div
+            key={`lat-${deg}`}
+            className="absolute inset-0 rounded-full border border-fuchsia-300/20"
+            style={{ transform: `rotateX(${deg}deg)` }}
+          />
+        ))}
+
+        {/* Polar glow accents */}
+        <div className="absolute -top-6 left-1/2 -translate-x-1/2 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
+        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 h-24 w-24 rounded-full bg-white/10 blur-xl" />
+
+        {/* Outer rings */}
+        <div className="absolute -inset-4 rounded-full border border-white/10" />
+        <div className="absolute -inset-10 rounded-full border border-white/5" />
+      </motion.div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-hidden relative">
@@ -60,7 +106,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* 3D Round with orbiting badges */}
+          {/* 3D Globe with orbiting badges */}
           <div className="relative h-[420px] md:h-[520px]">
             {/* Orbital container rotates to create motion */}
             <motion.div
@@ -72,10 +118,8 @@ export default function App() {
               <div className="absolute inset-0 rounded-full border border-white/10" />
 
               {/* Place badges at fixed angles around a circle */}
-              {/* Using translate to push elements to orbit radius */}
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="relative">
-                  {/* 7 badges around 360deg */}
                   <div className="absolute -left-1/2 -top-36">
                     <FloatingBadge label="Digital Marketing" Icon={Megaphone} />
                   </div>
@@ -101,24 +145,10 @@ export default function App() {
               </div>
             </motion.div>
 
-            {/* Central 3D sphere */}
-            <motion.div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
-            >
-              <div className="relative h-64 w-64 md:h-80 md:w-80 rounded-full">
-                {/* Core sphere with fake 3D lighting */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-fuchsia-400 via-indigo-500 to-sky-500" />
-                <div className="absolute inset-0 rounded-full shadow-[inset_-30px_-40px_80px_rgba(0,0,0,0.35),inset_30px_40px_80px_rgba(255,255,255,0.25)]" />
-                {/* Gloss highlight */}
-                <div className="absolute -top-6 -left-6 h-40 w-40 rounded-full bg-white/20 blur-2xl" />
-                <div className="absolute bottom-10 right-4 h-24 w-24 rounded-full bg-white/10 blur-xl" />
-                {/* Ring accents */}
-                <div className="absolute -inset-4 rounded-full border border-white/10" />
-                <div className="absolute -inset-10 rounded-full border border-white/5" />
-              </div>
-            </motion.div>
+            {/* New 3D wireframe globe */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <Globe3D />
+            </div>
           </div>
         </div>
       </section>
